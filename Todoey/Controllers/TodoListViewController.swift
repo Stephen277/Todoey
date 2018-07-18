@@ -9,10 +9,9 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController{
     
     var todoItems: Results<Item>?
- 
     let realm = try! Realm()
     
     var selectedCategory : Category? {
@@ -41,7 +40,8 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
@@ -140,6 +140,19 @@ class TodoListViewController: UITableViewController {
 
         tableView.reloadData()
     }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = todoItems?[indexPath.row] {
+            do {
+            try realm.write {
+                realm.delete(item)
+            }
+            } catch {
+                print("Error deleteing Item, \(error)")
+            }
+        }
+    }
+    
 }
 
 //Mark: - search Bar methods
