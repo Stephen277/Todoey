@@ -21,7 +21,8 @@ class TodoListViewController: SwipeTableViewController{
         }
     }
     
-//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    @IBOutlet weak var searchBar: UISearchBar!
+    //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
 //    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -29,11 +30,42 @@ class TodoListViewController: SwipeTableViewController{
         super.viewDidLoad() 
         
     //    print(dataFilePath)
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+    //   print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         tableView.separatorStyle = .none
+      
  
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        title = selectedCategory?.name
+       
+        guard let colorHex = selectedCategory?.colour else {fatalError()}
+  
+        updateNavbar(withHexCode: colorHex)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        updateNavbar(withHexCode: "1D9BF6")
+    }
+    
+    
+    //MARK: - Nav Bar Setup method
+    func updateNavbar(withHexCode colourHexCode: String) {
+        
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist")}
+        
+        guard let navBarColour = UIColor(hexString: colourHexCode) else {fatalError()}
+        navBar.barTintColor = navBarColour
+        navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+        
+        navBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor : ContrastColorOf(navBarColour, returnFlat: true)]
+        
+        searchBar.barTintColor = navBarColour
+    }
+    
 
     //MARK: - tableView datasource Methods
     
